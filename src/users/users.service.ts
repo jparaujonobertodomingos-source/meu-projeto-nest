@@ -26,12 +26,17 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    await this.usersRepository.update(id, updateUserDto);
-    return this.findOne(id);
+    return this.usersRepository.update(id, updateUserDto);
   }
 
   async remove(id: number) {
     await this.usersRepository.delete(id);
     return {deleted: true};
   }
+
+  findByEmail(email: string){
+    return this.usersRepository.findOne({ where: { email } });
+
+  }
+  
 }
