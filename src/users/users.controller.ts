@@ -12,7 +12,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll(){
     return this.usersService.findAll();
@@ -29,7 +28,7 @@ export class UsersController {
   }
 
   // Só ADMIN pode atualizar
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')  
   @Patch(':id')
   update(
@@ -40,14 +39,14 @@ export class UsersController {
 }
 
 
-  @UseGuards(AuthGuard('jwt'),RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @Patch(':id/role')
   updateRole(
