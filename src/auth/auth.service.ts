@@ -14,7 +14,7 @@ export class AuthService {
 
     // registro
     async register(registerDto: RegisterDto) {
-        const { name, email, password, role } = registerDto;
+        const { name, email, password } = registerDto;
 
         // verifica se já existe usuario com esse email
         const existing = await this.usersService.findByEmail(email);
@@ -29,7 +29,7 @@ export class AuthService {
             name,
             email,
             password: hashedPassword,
-            role,           
+            role: 'user',           
         });
 
         // opcional: não retorna a senha
@@ -39,8 +39,8 @@ export class AuthService {
     }
 
     // login
-    async login(LoginDto: LoginDto) {
-        const { email, password } = LoginDto;
+    async login(loginDto: LoginDto) {
+        const { email, password } = loginDto;
 
         const user = await this.usersService.findByEmail(email);
         if (!user){

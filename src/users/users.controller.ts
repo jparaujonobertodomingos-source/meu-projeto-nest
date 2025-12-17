@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGua
 import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 
 @Controller('users')
 export class UsersController {
@@ -31,10 +32,12 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'),RolesGuard)
   @Roles('admin')  
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, 
-  @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
-  }
+  update(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() updateUserDto: UpdateUserDto,
+) {
+  return this.usersService.update(id, updateUserDto);
+}
 
 
   @UseGuards(AuthGuard('jwt'),RolesGuard)
@@ -43,4 +46,14 @@ export class UsersController {
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Patch(':id/role')
+  updateRole(
+  @Param('id', ParseIntPipe) id: number,
+  @Body() dto: UpdateUserRoleDto,
+) {
+  return this.usersService.updateRole(id, dto.role);
+}
 }

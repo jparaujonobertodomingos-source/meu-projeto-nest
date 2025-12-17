@@ -26,7 +26,8 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(id, updateUserDto);
+    await this.usersRepository.update(id, updateUserDto);
+    return this.findOne(id);
   }
 
   async remove(id: number) {
@@ -37,6 +38,11 @@ export class UsersService {
   findByEmail(email: string){
     return this.usersRepository.findOne({ where: { email } });
 
+  }
+
+  async updateRole(id: number, role:string){
+    await this.usersRepository.update(id, { role });
+    return this.findOne(id);
   }
   
 }
