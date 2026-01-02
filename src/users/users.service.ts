@@ -44,5 +44,9 @@ export class UsersService {
     await this.usersRepository.update(id, { role });
     return this.findOne(id);
   }
+
+  async updateRefreshToken(userId: number, refreshTokenHash: string | null ){
+    await this.usersRepository.update(userId, { refreshToken: refreshTokenHash });
+  }
   
 }

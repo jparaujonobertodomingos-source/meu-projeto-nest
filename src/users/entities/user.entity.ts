@@ -28,6 +28,9 @@ export class User {
 
     @UpdateDateColumn()
     updateAt: Date;
+
+    @Column({ type: 'varchar', nullable: true })
+    refreshToken: string | null;
 }
 
 
