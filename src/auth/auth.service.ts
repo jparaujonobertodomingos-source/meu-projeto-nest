@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Injectable()
 export class AuthService {
@@ -54,16 +55,65 @@ export class AuthService {
 
         const payload = { sub: user.id, email: user.email, role: user.role };
 
-        const token = await this.jwtService.signAsync(payload);
+        // access token (usa o expiresIn padrão do JwtModule: 1h)
+        const accessToken = await this.jwtService.signAsync(payload);
+
+        // refresh token (7 dias)
+        const refreshToken = await this.jwtService.signAsync(payload, {
+            expiresIn: '7d',
+        });
+
+        // salvar HASH do refresh token no banco
+        const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+        await this.usersService.updateRefreshToken(user.id, refreshTokenHash);
 
         // opcional: esconder senha
         delete (user as any).password;
+        delete (user as any).refreshToken;
 
         return {
-            access_token: token,
+            access_token: accessToken,
+            refresh_token: refreshToken,
             user,
         };
 
+    }
+
+
+    async refresh(dto: RefreshDto){
+        const { refresh_token } = dto;
+
+        let payload: any;
+        try{
+            payload = await this.jwtService.verifyAsync(refresh_token, {
+                secret: 'jwt_secret_meu_projeto',
+            });
+        } catch {
+            throw new UnauthorizedException('Refresh token inválido ou expirado');
+        }
+
+        const userId = payload.sub;
+        
+        const user = await this.usersService.findOne(userId);
+        if (!user || !user.refreshToken) {
+            throw new UnauthorizedException('Refresh token inválido');
+        }
+
+        const isRefreshValid = await bcrypt.compare(refresh_token, user.refreshToken);
+        if (!isRefreshValid) {
+            throw new UnauthorizedException('Refresh token inválido');
+        }
+
+        const newPayload = { sub: user.id, email: user.email, role: user.role };
+        const access_token = await this.jwtService.signAsync(newPayload);
+
+        return { access_token };
+    }
+
+
+    async logout(userId: number){
+        await this.usersService.updateRefreshToken(userId, null);
+        return { loggedOut: true };
     }
 
 }
