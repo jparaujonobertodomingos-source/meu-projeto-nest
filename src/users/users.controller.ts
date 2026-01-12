@@ -14,17 +14,19 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(RolesGuard)
   @Get()
   findAll(){
     return this.usersService.findAll();
     }
 
+   @ApiBearerAuth('access-token')
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
+   @ApiBearerAuth('access-token')
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
@@ -32,7 +34,7 @@ export class UsersController {
 
   // Só ADMIN pode atualizar
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')  
   @Patch(':id')
   update(
@@ -43,7 +45,7 @@ export class UsersController {
 }
 
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
@@ -51,7 +53,7 @@ export class UsersController {
   }
 
   @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @Patch(':id/role')
   updateRole(
