@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { ListUsersDto } from './dto/list-users.dto';
+import { ILike } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -17,9 +19,6 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  findAll() {
-    return this.usersRepository.find();
-  }
 
   findOne(id: number) {
     return this.usersRepository.findOne({where: {id}});
@@ -47,6 +46,47 @@ export class UsersService {
 
   async updateRefreshToken(userId: number, refreshTokenHash: string | null ){
     await this.usersRepository.update(userId, { refreshToken: refreshTokenHash });
+  }
+
+  async findAll(query: ListUsersDto){
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+
+    const skip = (page - 1) * limit;
+
+    // filtros (contém)
+    const where: any = {};
+
+    if(query.name){
+      where.name = ILike(`%${query.name}%`);
+    }
+
+    if (query.email){
+      where.email = ILike(`%${query.email}%`)
+    }
+
+    // ordernação
+    const sort = query.sort ?? 'createdAt';
+    const order = (query.order ?? 'desc').toUpperCase() as 'ASC' | 'DESC';
+
+    const [data, total] = await this.usersRepository.findAndCount({
+      where,
+      take: limit,
+      skip,
+      order: { [sort]: order },
+    });
+
+    const totalPages = Math.ceil(total / limit);
+
+    return{
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
   }
   
 }
