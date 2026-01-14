@@ -1,5 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Roles } from 'src/auth/roles.decorator';
@@ -7,6 +6,8 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ListUsersDto } from './dto/list-users.dto';
+
 
 @ApiTags('Users')
 @Controller('users')
@@ -16,8 +17,8 @@ export class UsersController {
   @ApiBearerAuth('access-token')
   @UseGuards(RolesGuard)
   @Get()
-  findAll(){
-    return this.usersService.findAll();
+  findAll(@Query() query: ListUsersDto){
+    return this.usersService.findAll(query);
     }
 
    @ApiBearerAuth('access-token')
