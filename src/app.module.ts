@@ -4,15 +4,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth-guard';
+import { ConfigModule } from '@nestjs/config';
+
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [ConfigModule.forRoot({
+    isGlobal:true,
+  }),
+    TypeOrmModule.forRoot({
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres', 
-    password: 'admin',
-    database: 'meubanco',
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    username: process.env.DB_USER, 
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
     autoLoadEntities: true,
     synchronize: false,
     logging: true,

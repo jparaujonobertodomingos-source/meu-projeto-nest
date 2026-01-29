@@ -60,7 +60,7 @@ export class AuthService {
 
         // refresh token (7 dias)
         const refreshToken = await this.jwtService.signAsync(payload, {
-            expiresIn: '7d',
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN as any,
         });
 
         // salvar HASH do refresh token no banco
@@ -73,7 +73,7 @@ export class AuthService {
 
         return {
             access_token: accessToken,
-            refresh_token: refreshToken,
+            refreshToken,
             user,
         };
 
@@ -81,15 +81,15 @@ export class AuthService {
 
 
     async refresh(dto: RefreshDto){
-        const { refresh_token } = dto;
+        const { refreshToken } = dto;
 
         let payload: any;
         try{
-            payload = await this.jwtService.verifyAsync(refresh_token, {
-                secret: 'jwt_secret_meu_projeto',
+        payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_SECRET,
             });
-        } catch {
-            throw new UnauthorizedException('Refresh token inválido ou expirado');
+        }   catch {
+            throw new UnauthorizedException('Refresh token inválido ou expira');
         }
 
         const userId = payload.sub;
@@ -99,7 +99,7 @@ export class AuthService {
             throw new UnauthorizedException('Refresh token inválido');
         }
 
-        const isRefreshValid = await bcrypt.compare(refresh_token, user.refreshToken);
+        const isRefreshValid = await bcrypt.compare(refreshToken, user.refreshToken);
         if (!isRefreshValid) {
             throw new UnauthorizedException('Refresh token inválido');
         }
