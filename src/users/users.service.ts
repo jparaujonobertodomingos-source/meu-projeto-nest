@@ -57,6 +57,10 @@ export class UsersService {
     // filtros (contém)
     const where: any = {};
 
+    if (query.role) {
+      where.role = query.role
+    }
+
     if(query.name){
       where.name = ILike(`%${query.name}%`);
     }

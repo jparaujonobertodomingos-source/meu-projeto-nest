@@ -44,4 +44,10 @@ export class ListUsersDto {
     @IsOptional()
     @IsIn(['asc', 'desc'])
     order?: 'asc' | 'desc' = 'desc';
+
+
+    @ApiPropertyOptional({ example: 'admin', description: 'Filtra por role'})
+    @IsOptional()
+    @IsIn(['user','admin'])
+    role?:'user'|'admin';
 }
