@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth-guard';
 import { ConfigModule } from '@nestjs/config';
+import { ProjectModule } from './project/project.module';
+import { TaskModule } from './task/task.module';
 
 
 @Module({
@@ -24,6 +26,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
      UsersModule,
      AuthModule,
+     ProjectModule,
+     TaskModule,
     ],
     providers:[{
       provide: APP_GUARD,
@@ -31,4 +35,5 @@ import { ConfigModule } from '@nestjs/config';
     },
   ],
 })
+
 export class AppModule {}

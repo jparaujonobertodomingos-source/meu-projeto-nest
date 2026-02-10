@@ -4,7 +4,9 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToMany,
     } from 'typeorm';
+import { Project } from 'src/project/entities/project.entity';
 
 @Entity()
 export class User {
@@ -27,10 +29,13 @@ export class User {
     createdAt: Date;
 
     @UpdateDateColumn()
-    updateAt: Date;
+    updatedAt: Date;
 
     @Column({ type: 'varchar', nullable: true })
     refreshToken: string | null;
+
+    @OneToMany(() => Project, (project) => project.owner)
+    projects: Project[]
 }
 
 
