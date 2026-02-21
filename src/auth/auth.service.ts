@@ -20,7 +20,7 @@ export class AuthService {
         // verifica se já existe usuario com esse email
         const existing = await this.usersService.findByEmail(email);
         if (existing) {
-            throw new UnauthorizedException('Email já está em uso');
+            throw new UnauthorizedException('Email is already in user');
         }
 
         // hash na senha
@@ -45,12 +45,12 @@ export class AuthService {
 
         const user = await this.usersService.findByEmail(email);
         if (!user){
-            throw new UnauthorizedException('Credenciais inválidas');
+            throw new UnauthorizedException('invalid credentials');
         }
 
         const passordOk = await bcrypt.compare(password, user.password);
         if (!passordOk){
-            throw new UnauthorizedException('Credenciais inválidas');
+            throw new UnauthorizedException('invalid credentials');
         }
 
         const payload = { sub: user.id, email: user.email, role: user.role };

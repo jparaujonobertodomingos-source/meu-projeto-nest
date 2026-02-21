@@ -77,7 +77,7 @@ async findOne(id, userId){
   });
 
     if(!projeto){
-      throw new NotFoundException('Projeto não encontrado')
+      throw new NotFoundException('Project not found')
     }
 
 
@@ -97,7 +97,7 @@ async remove(id, userId){
 
 
   if(!soft_delete){
-    throw new NotFoundException('Projeto não encontrado')
+    throw new NotFoundException('Project not found')
   }
 
   await this.projectRepository.update(id, { deletedAt: new Date() })
