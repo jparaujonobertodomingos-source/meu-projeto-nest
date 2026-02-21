@@ -8,7 +8,7 @@ import {
     ManyToOne,
     JoinColumn
     } from 'typeorm';
-import { Task } from 'src/task/task.entity';
+import { Task } from 'src/task/entities/task.entity';
 import { User } from '../../users/entities/user.entity';
 
 @Entity()

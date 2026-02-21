@@ -17,7 +17,9 @@ export class Task {
     @ManyToOne(() => Project, (project) => project.tasks, { onDelete: 'CASCADE'})
     @JoinColumn({ name: 'projectId'})
     project: Project
-
+    
+    @Column()
+    projectId: number;
 
     @Column()
     title: string;
@@ -25,11 +27,11 @@ export class Task {
     @Column({ type:'varchar', nullable: true })
     description: string | null;
 
-    @Column()
-    status: string;
+    @Column({ default: 'pending' })
+    status: 'pending' | 'in_progress' | 'done';
 
-    @Column()
-    priority: string;
+    @Column({ default: 'medium' })
+    priority: 'low' | 'medium' | 'high';
 
     @Column({ type: 'timestamp', nullable: true })
     dueDate: Date | null;
@@ -39,5 +41,8 @@ export class Task {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({ type: 'timestamp', nullable: true })
+    deletedAt:Date | null
 
 }
